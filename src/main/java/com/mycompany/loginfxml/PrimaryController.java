@@ -54,7 +54,9 @@ public class PrimaryController implements Initializable{
             if( resultado.size()>0){
                 info.setText("Usuario existe");
                 info.setStyle("-fx-background-color:green; -fx-text-fill:white;");
+                
                 SessionData.setUsuario( resultado.get(0));
+                
                 try {
                     App.setRoot("principal");
                 } catch (IOException ex) {
