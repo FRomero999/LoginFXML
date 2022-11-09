@@ -11,6 +11,7 @@
     <property name="hibernate.show_sql">true</property>
 
     <mapping class="models.Usuario"/>
+    <mapping class="models.Actividad"/>
     
 </session-factory>
 </hibernate-configuration>
