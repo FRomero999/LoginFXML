@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -76,6 +77,8 @@
               <menus>
                 <Menu mnemonicParsing="false" text="Archivo">
                   <items>
+                        <MenuItem mnemonicParsing="false" onAction="#abrirVentanaPerfil" text="Cambiar Perfil" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
                     <MenuItem fx:id="menuSalir" mnemonicParsing="false" onAction="#switchToPrimary" text="Cerrar" />
                   </items>
                 </Menu>
