@@ -50,6 +50,8 @@ public class PrincipalController implements Initializable {
     private Actividad actividadActual = null;
     @FXML
     private Button btnBorrar;
+    @FXML
+    private Button btnActualizar;
 
     @FXML
     private void switchToPrimary() throws IOException {
@@ -65,6 +67,9 @@ public class PrincipalController implements Initializable {
         cNombre.setCellValueFactory(new PropertyValueFactory("nombre"));
         cCategoria.setCellValueFactory(new PropertyValueFactory("categoria"));
 
+        btnActualizar.setDisable(true);
+        btnBorrar.setDisable(true);
+        
         actualizarTabla();
 
     }
@@ -82,6 +87,10 @@ public class PrincipalController implements Initializable {
             textCategoria.setText(actividad.getCategoria());
 
             actividadActual = actividad;
+    
+            btnActualizar.setDisable(false);
+            btnBorrar.setDisable(false);
+            
         }
     }
 
@@ -95,8 +104,7 @@ public class PrincipalController implements Initializable {
                 s.delete(actividadActual);
                 t.commit();
 
-                Usuario actualizado = s.get(Usuario.class, SessionData.getUsuario().getId());
-                SessionData.setUsuario(actualizado);
+                actualizarUsuario(s);
 
                 actividadActual = null;
 
@@ -110,10 +118,16 @@ public class PrincipalController implements Initializable {
         }
     }
 
+    private void actualizarUsuario(final Session s) {
+        Usuario actualizado = s.get(Usuario.class, SessionData.getUsuario().getId());
+        SessionData.setUsuario(actualizado);
+    }
+
     private void borrarFormulario() {
         textId.setText("");
         textActividad.setText("");
         textCategoria.setText("");
+        btnActualizar.setDisable(true);       
     }
 
     private Boolean pedirConfirmacion() {
@@ -128,5 +142,25 @@ public class PrincipalController implements Initializable {
     private void actualizarTabla() {
         tabla.getItems().clear();
         tabla.getItems().addAll(SessionData.getUsuario().getActividades());
+    }
+
+    @FXML
+    private void actualizarTarea(ActionEvent event) {
+        
+        if (actividadActual != null){
+
+            actividadActual.setNombre( textActividad.getText() );
+            actividadActual.setCategoria( textCategoria.getText() );
+            
+            try ( Session s = HibernateUtil.getSessionFactory().openSession()) {
+                Transaction t = s.beginTransaction();
+                s.update(actividadActual);
+                t.commit();
+                
+                actualizarUsuario(s);            
+                
+                actualizarTabla();
+            }
+        }
     }
 }
