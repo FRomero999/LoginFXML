@@ -52,6 +52,8 @@ public class PrincipalController implements Initializable {
     private Button btnBorrar;
     @FXML
     private Button btnActualizar;
+    @FXML
+    private Button btnAñadir;
 
     @FXML
     private void switchToPrimary() throws IOException {
@@ -160,7 +162,50 @@ public class PrincipalController implements Initializable {
                 actualizarUsuario(s);            
                 
                 actualizarTabla();
+                detalle.setText("Actividad actualizada con éxito");
+                
             }
         }
     }
+
+    @FXML
+    private void añadirTarea(ActionEvent event) {
+        
+        Actividad a = leerFormulario();
+        
+        if( a!=null ){   
+            try ( Session s = HibernateUtil.getSessionFactory().openSession()) {
+                Transaction t = s.beginTransaction();
+                s.save(a);
+                t.commit();
+                
+                actualizarUsuario(s);            
+                
+                actualizarTabla();
+                detalle.setText("Actividad almacenada con éxito");
+                
+                actividadActual = a;              
+                
+                borrarFormulario();
+            }           
+        }
+    }
+
+    private Actividad leerFormulario() {
+        String nombre = textActividad.getText();
+        String categoria = textCategoria.getText();
+        
+        if( "".equals(nombre) || "".equals(categoria)){
+            detalle.setText("No se permiten tareas sin nombre ni categoria");
+            return null;
+        }else{
+            Actividad a = new Actividad();
+            a.setCategoria(categoria);
+            a.setNombre(nombre);
+            a.setUsuario( SessionData.getUsuario() );
+            return a;
+        }
+    }
+        
+    
 }

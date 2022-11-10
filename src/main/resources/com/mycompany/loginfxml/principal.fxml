@@ -41,6 +41,7 @@
             </GridPane>
             <FlowPane alignment="CENTER" hgap="20.0">
                <children>
+                  <Button fx:id="btnAñadir" mnemonicParsing="false" onAction="#añadirTarea" text="Añadir" />
                   <Button fx:id="btnActualizar" mnemonicParsing="false" onAction="#actualizarTarea" text="Actualizar" />
                   <Button fx:id="btnBorrar" mnemonicParsing="false" onAction="#borrarTarea" text="Borrar" />
                </children>
