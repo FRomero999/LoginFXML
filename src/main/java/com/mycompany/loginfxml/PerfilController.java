@@ -16,6 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 /**
  * FXML Controller class
@@ -43,26 +44,54 @@ public class PerfilController implements Initializable {
 
     @FXML
     private void modificar(ActionEvent event) {
-        SessionData.getUsuario().setAlias( txtAlias.getText() );
-        try ( Session s = HibernateUtil.getSessionFactory().openSession()) {
-            Transaction t = s.beginTransaction();
-            s.update(SessionData.getUsuario());
-            t.commit();
+        
+        if( !SessionData.getUsuario().getAlias().equals(txtAlias.getText()) ){
+            System.out.println("Hay que guardar el alias");
+            SessionData.getUsuario().setAlias( txtAlias.getText() );
+            try ( Session s = HibernateUtil.getSessionFactory().openSession()) {
+                Transaction t = s.beginTransaction();
+                s.update(SessionData.getUsuario());
+                t.commit();
+            }
         }
-        salirVentana();
+        
+        if( txtContraseña.getText().length()>0 ){
+            System.out.println("Hay que guardar la contraseña");
+
+            try ( Session s = HibernateUtil.getSessionFactory().openSession()) {
+                Transaction t = s.beginTransaction();
+                Query q = s.createQuery("update Usuario us set us.password=md5(:pass) where us.id=:id");
+                q.setParameter("pass", txtContraseña.getText());
+                q.setParameter("id", SessionData.getUsuario().getId());
+                if(q.executeUpdate()==0){
+                    System.out.println("Hubo error al almancenar el password");
+                    t.rollback();
+                }else{
+                    t.commit();
+                    
+                    SessionData.setUsuario(null);
+                    salirVentana("primary");
+                    return;
+                }
+            }            
+        }
+
+        salirVentana("principal");
     }
 
     @FXML
     private void volver(ActionEvent event) {
-        salirVentana();
+        salirVentana("principal");
     }
 
-    private void salirVentana() {
+    private void salirVentana(String donde) {
         try {
-            App.setRoot("principal");
+            App.setRoot(donde);
         } catch (IOException ex) {
             Logger.getLogger(PerfilController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+  
     
 }
