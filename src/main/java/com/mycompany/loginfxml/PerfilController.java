@@ -4,6 +4,9 @@
  */
 package com.mycompany.loginfxml;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -14,6 +17,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
@@ -33,6 +39,8 @@ public class PerfilController implements Initializable {
     private TextField txtAlias;
     @FXML
     private TextField txtContraseña;
+    @FXML
+    private ImageView imgUser;
 
     /**
      * Initializes the controller class.
@@ -40,6 +48,20 @@ public class PerfilController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         txtAlias.setText( SessionData.getUsuario().getAlias() );
+        System.out.println("users/"+SessionData.getUsuario().getId()+".png");
+        
+        try {
+            var fis = new FileInputStream("users/"+SessionData.getUsuario().getId()+".png");
+            System.out.println(fis);
+            Image avatar = new Image(fis);
+            imgUser.setImage(avatar);
+          
+        } catch (FileNotFoundException ex) {
+            System.out.println("El usuario no tiene imagen");
+        }
+        
+        
+        
     }    
 
     @FXML
@@ -90,6 +112,15 @@ public class PerfilController implements Initializable {
         } catch (IOException ex) {
             Logger.getLogger(PerfilController.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    @FXML
+    private void cambiarImagen(ActionEvent event) {
+        
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Selecciona la imagen de perfil");
+        fc.showOpenDialog( txtAlias.getScene().getWindow() );
+        
     }
 
   
